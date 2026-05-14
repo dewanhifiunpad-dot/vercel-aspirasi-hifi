@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kawal HIFI — Dari Hati, Untuk HIFI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f7f5f2;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --border: #e4dfd8;
+    --text: #1a1714;
+    --text-muted: #7a7167;
+    --accent: #2d6a4f;
+    --accent-light: #52b788;
+    --accent-bg: #d8f3dc;
+    --amber: #e9a23b;
+    --amber-bg: #fef3dc;
+    --red: #c0392b;
+    --red-bg: #fdecea;
+    --blue: #2563eb;
+    --blue-bg: #eff6ff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.05);
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-lg: 20px;
+    --font: 'Plus Jakarta Sans', sans-serif;
+    --font-serif: 'Lora', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 15% 15%, rgba(45,106,79,.07) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 85% 85%, rgba(82,183,136,.06) 0%, transparent 70%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='1' fill='%232d6a4f' fill-opacity='0.04'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  @media (hover: hover) and (pointer: fine) {
+    * { cursor: none !important; }
+    label, input, select, textarea, p, h1, h2, h3, span, div {
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    #cursor-dot {
+      position: fixed; top: 0; left: 0; z-index: 99999; pointer-events: none;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); transform: translate(-50%, -50%);
+      transition: width .2s, height .2s, background .2s;
+      mix-blend-mode: multiply;
+    }
+    #cursor-ring {
+      position: fixed; top: 0; left: 0; z-index: 99998; pointer-events: none;
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1.5px solid rgba(45,106,79,.45);
+      transform: translate(-50%, -50%);
+      transition: width .25s, height .25s, border-color .2s, background .2s;
+    }
+    .cursor-hover #cursor-dot { width: 6px; height: 6px; background: var(--accent-light); }
+    .cursor-hover #cursor-ring { width: 46px; height: 46px; border-color: var(--accent); background: rgba(45,106,79,.05); }
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(247,245,242,0.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 62px;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 800; font-size: 17px; color: var(--text); text-decoration: none;
+    flex-shrink: 0;
+  }
+  .nav-logo-img { height: 40px; width: auto; }
+  .nav-logo-text { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 18px; color: #333; }
+  .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+  .nav-links a {
+    display: block; padding: 6px 14px; border-radius: 8px;
+    color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500;
+    transition: all .15s; white-space: nowrap;
+  }
+  .nav-links a:hover { background: var(--surface2); color: var(--text); }
+  .nav-cta { background: var(--accent) !important; color: #fff !important; font-weight: 600 !important; }
+  .nav-cta:hover { background: #245a42 !important; }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer !important; padding: 4px; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: all .2s; }
+  .mobile-nav {
+    display: none; flex-direction: column; gap: 4px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+  }
+  .mobile-nav.open { display: flex; }
+  .mobile-nav a { padding: 10px 14px; border-radius: 8px; color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: all .15s; }
+  .mobile-nav a:hover { background: var(--surface2); color: var(--text); }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 1100px; margin: 0 auto;
+    padding: 80px 24px 64px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent-bg); color: var(--accent);
+    padding: 5px 12px 5px 8px; border-radius: 100px;
+    font-size: 12.5px; font-weight: 700; letter-spacing: .3px; margin-bottom: 20px;
+  }
+  .hero-eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-light); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(1.4); } }
+  .hero h1 {
+    font-family: "Hedvig Letters Serif", serif;
+    font-size: clamp(32px, 6vw, 80px);
+    font-weight: 400; font-style: normal;
+    line-height: 1.05; letter-spacing: -0.02em;
+    margin-bottom: 18px; color: #1d3124;
+  }
+  .hero h1 em { font-style: italic; font-family: var(--font-serif); color: var(--accent); }
+  .hero-desc { color: var(--text-muted); font-size: 15px; line-height: 1.75; margin-bottom: 32px; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 22px; border-radius: 10px;
+    font-family: var(--font); font-size: 14px; font-weight: 600;
+    cursor: pointer !important; border: none; transition: all .15s; text-decoration: none;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #245a42; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-ghost { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); }
+  .btn-ghost:hover { background: var(--surface2); }
+
+  /* ── HERO STATS ── */
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 8px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border);
+  }
+  .hero-stat-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 12px 10px 10px;
+    box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .hero-stat-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .hero-stat-item::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent); border-radius: 4px 4px 0 0;
+  }
+  .hero-stat-item[data-stat="disampaikan"]::after { background: var(--amber); }
+  .hero-stat-item[data-stat="tolak"]::after { background: var(--red); }
+  .hero-stat-item[data-stat="noresponse"]::after { background: #9ca3af; }
+  .hero-stat-icon { font-size: 14px; margin-bottom: 4px; }
+  .hero-stat-num { font-size: 20px; font-weight: 800; color: var(--text); line-height: 1.1; margin-bottom: 3px; }
+  .hero-stat-label { font-size: 10px; color: var(--text-muted); font-weight: 600; line-height: 1.35; }
+  .hero-stat-bar { height: 3px; background: var(--surface2); border-radius: 99px; margin-top: 7px; overflow: hidden; }
+  .hero-stat-fill { height: 100%; border-radius: 99px; width: 0%; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+
+  /* ── HERO VISUAL ── */
+  .hero-visual {
+    background: var(--surface); border-radius: var(--radius-lg);
+    border: 1px solid var(--border); padding: 24px;
+    box-shadow: var(--shadow-md); position: relative;
+  }
+  .mini-card {
+    background: var(--bg); border-radius: var(--radius-sm);
+    border: 1px solid var(--border); padding: 14px 16px;
+    margin-bottom: 10px; display: flex; align-items: flex-start; gap: 12px; transition: all .2s;
+  }
+  .mini-card:last-child { margin-bottom: 0; }
+  .mini-card:hover { box-shadow: var(--shadow-sm); transform: translateX(2px); }
+  .mini-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .mini-card-body { flex: 1; min-width: 0; }
+  .mini-card-name { font-size: 12.5px; font-weight: 700; margin-bottom: 2px; }
+  .mini-card-text { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .mini-badge { display: inline-block; padding: 2px 8px; border-radius: 100px; font-size: 10.5px; font-weight: 700; margin-top: 5px; }
+  .badge-green { background: var(--accent-bg); color: var(--accent); }
+  .badge-amber { background: var(--amber-bg); color: #a06a10; }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); }
+  .badge-gray { background: var(--surface2); color: var(--text-muted); }
+
+  /* ── LOADING ── */
+  .loading-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
+  .loading-spinner { width: 32px; height: 32px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── SECTION ── */
+  section { padding: 56px 24px; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-header { margin-bottom: 32px; }
+  .section-label { font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  .section-title { font-size: clamp(20px, 3vw, 30px); font-weight: 800; letter-spacing: -.5px; }
+  .section-sub { color: var(--text-muted); margin-top: 6px; font-size: 14.5px; }
+
+  /* ── FILTER BAR ── */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
+  .filter-label { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-right: 4px; flex-shrink: 0; }
+  .filter-bars-wrap { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  .filter-select {
+    padding: 7px 36px 7px 14px; border-radius: 8px; border: 1.5px solid var(--border);
+    background: var(--surface); color: var(--text); font-family: var(--font);
+    font-size: 13px; font-weight: 600; cursor: pointer !important; transition: all .15s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7167' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+    appearance: none; -webkit-appearance: none; min-width: 160px;
+  }
+  .filter-select:hover, .filter-select:focus { border-color: var(--accent-light); color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(82,183,136,.12); }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: var(--border); border-radius: 2px; }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-dot { position: absolute; left: -27px; top: 18px; width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid var(--surface); box-shadow: 0 0 0 2px var(--border); background: var(--accent-light); }
+  .timeline-dot.dot-amber { background: var(--amber); box-shadow: 0 0 0 2px var(--amber-bg); }
+  .timeline-dot.dot-red { background: var(--red); box-shadow: 0 0 0 2px var(--red-bg); }
+  .timeline-dot.dot-gray { background: #ccc; box-shadow: 0 0 0 2px var(--surface2); }
+  .tl-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow-sm); transition: all .2s; }
+  .tl-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .tl-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+  .tl-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .tl-name { font-size: 13.5px; font-weight: 700; }
+  .tl-date { font-size: 11.5px; color: var(--text-muted); white-space: nowrap; }
+  .tl-text { font-size: 13.5px; line-height: 1.6; color: var(--text); margin-bottom: 14px; }
+  .tl-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tl-tag { padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: .2px; }
+  .tl-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .tl-footer .tl-tags { flex: 1; min-width: 0; }
+  .tl-tanggapan-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 13px; border-radius: 8px; flex-shrink: 0;
+    border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted);
+    font-family: var(--font); font-size: 12px; font-weight: 600;
+    cursor: pointer !important; transition: all .15s; white-space: nowrap;
+  }
+  .tl-tanggapan-btn:hover { border-color: var(--accent-light); color: var(--accent); background: var(--accent-bg); }
+  .show-more-btn {
+    width: 100%; padding: 13px; background: var(--surface);
+    border: 1.5px dashed var(--border); border-radius: var(--radius);
+    color: var(--text-muted); font-family: var(--font); font-size: 14px; font-weight: 600;
+    cursor: pointer !important; margin-top: 8px; transition: all .15s;
+  }
+  .show-more-btn:hover { border-color: var(--accent-light); color: var(--accent); background: var(--accent-bg); }
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
+  .empty-state-icon { font-size: 36px; margin-bottom: 10px; }
+
+  /* ── TANGGAPAN MODAL CONTENT ── */
+  .tanggapan-aspiration-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 14px; }
+  .tanggapan-aspiration-label { font-size: 10.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .tanggapan-aspiration-text { font-size: 13.5px; line-height: 1.65; color: var(--text); }
+  .tanggapan-divider { height: 1px; background: var(--border); margin: 16px 0; }
+  .tanggapan-response-label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 12px; }
+  .tanggapan-response-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-light); animation: pulse 2s infinite; flex-shrink: 0; }
+  .tanggapan-response-text { background: var(--accent-bg); border: 1px solid #b7e4c7; border-radius: var(--radius-sm); padding: 14px 16px; font-size: 13.5px; line-height: 1.7; color: #1f5c3a; }
+  .tanggapan-empty { text-align: center; padding: 28px 16px; }
+  .tanggapan-empty-icon { font-size: 32px; margin-bottom: 10px; }
+  .tanggapan-empty-text { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+  /* ── CHARTS ── */
+  .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow-sm); }
+  .chart-card-title { font-size: 13.5px; font-weight: 700; margin-bottom: 4px; }
+  .chart-card-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+  .chart-wrap { position: relative; height: 200px; }
+  .progress-steps { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+  .progress-stat { flex: 1; min-width: 110px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow-sm); }
+  .progress-stat-num { font-size: 24px; font-weight: 800; color: var(--accent); }
+  .progress-stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+
+  /* ── FORM ── */
+  #form-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .form-layout { display: grid; grid-template-columns: 1.2fr 1.2fr; gap: 56px; align-items: start; }
+  .form-grid { display: grid; grid-template-columns: 1.2fr 1.2fr; gap: 20px 24px; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label {
+    font-size: 13px; font-weight: 700; color: var(--text);
+    line-height: 1.6; padding: 2px 0 1px;
+    display: block; overflow: visible;
+  }
+  label span { font-weight: 400; color: var(--text-muted); }
+  label .req { color: var(--red); font-weight: 700; font-style: normal; }
+  input, select, textarea {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--bg); color: var(--text); font-family: var(--font); font-size: 14px;
+    transition: all .15s; outline: none; appearance: none; -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent-light); background: #fff; box-shadow: 0 0 0 3px rgba(82,183,136,.15); }
+  input.field-error, select.field-error, textarea.field-error {
+    border-color: var(--red) !important;
+    box-shadow: 0 0 0 3px rgba(192,57,43,.12) !important;
+    background: #fff9f9;
+  }
+  textarea { resize: vertical; min-height: 110px; }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7167' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
+  }
+  .form-warning { display: flex; align-items: flex-start; gap: 8px; background: var(--amber-bg); border: 1px solid #f5d48a; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 12.5px; color: #7a4f10; line-height: 1.5; margin-top: 2px; }
+  .form-warning-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .anon-toggle { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--bg); cursor: pointer !important; transition: all .15s; }
+  .anon-toggle:hover { border-color: var(--accent-light); }
+  .anon-toggle.selected { border-color: var(--accent); background: var(--accent-bg); }
+  .toggle-icon { font-size: 20px; }
+  .toggle-title { font-size: 13.5px; font-weight: 700; }
+  .toggle-desc { font-size: 12px; color: var(--text-muted); }
+  .anon-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .custom-other { margin-top: 8px; display: none; }
+  .custom-other.visible { display: block; }
+  .submit-btn {
+    width: 100%; padding: 15px; border: none; border-radius: var(--radius-sm);
+    background: var(--accent); color: #fff; font-family: var(--font); font-size: 15px; font-weight: 700;
+    cursor: pointer !important; transition: all .2s; margin-top: 8px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .submit-btn:hover { background: #245a42; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { background: #a0bfb0; cursor: not-allowed !important; transform: none; box-shadow: none; }
+
+  /* ── FIELD ERROR MESSAGE ── */
+  .field-error-msg {
+    font-size: 11.5px; color: var(--red); font-weight: 600;
+    display: flex; align-items: center; gap: 4px; margin-top: -2px;
+  }
+
+  /* ── COMING SOON ── */
+  .coming-soon-banner { background: linear-gradient(135deg, #1a1714 0%, #2d4a3e 100%); color: #fff; border-radius: var(--radius-lg); padding: 48px 40px; text-align: center; position: relative; overflow: hidden; }
+  .cs-noise { position: absolute; inset: 0; opacity: .04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .cs-chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(82,183,136,.2); color: var(--accent-light); padding: 5px 14px; border-radius: 100px; font-size: 12px; font-weight: 700; letter-spacing: .5px; margin-bottom: 18px; border: 1px solid rgba(82,183,136,.3); }
+  .cs-title { font-size: clamp(22px, 3vw, 36px); font-weight: 800; letter-spacing: -.5px; margin-bottom: 12px; }
+  .cs-title em { font-family: var(--font-serif); font-style: italic; color: var(--accent-light); }
+  .cs-desc { color: rgba(255,255,255,.6); max-width: 540px; margin: 0 auto 28px; font-size: 15px; }
+  .cs-features { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .cs-feature { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: var(--radius-sm); padding: 10px 16px; font-size: 13px; font-weight: 600; }
+
+  /* ── FOOTER ── */
+  footer { text-align: center; padding: 28px 24px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
+  footer strong { color: var(--accent); }
+
+  /* ── GENERIC MODAL OVERLAY ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,.45); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  /* ── THANK YOU MODAL ── */
+  #thankYouModalInner {
+    position: relative; overflow: hidden; border-radius: var(--radius-lg);
+    max-width: 400px; width: 100%; box-shadow: var(--shadow-lg);
+    transform: scale(.95); transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  .modal-overlay.open #thankYouModalInner { transform: scale(1); }
+  .modal-confetti-canvas { position: absolute; inset: 0; pointer-events: none; z-index: 10; border-radius: var(--radius-lg); }
+  .modal-top {
+    background: linear-gradient(150deg, #1a4731 0%, #2d6a4f 100%);
+    padding: 28px 28px 24px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .modal-rings { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .07; pointer-events: none; }
+  .modal-sparkle { font-size: 34px; display: block; margin-bottom: 10px; position: relative; z-index: 1; }
+  .modal-top-title { font-size: 21px; font-weight: 800; color: #fff; margin-bottom: 5px; position: relative; z-index: 1; letter-spacing: -.3px; }
+  .modal-top-sub { font-size: 13px; color: rgba(255,255,255,.72); line-height: 1.55; position: relative; z-index: 1; }
+  .modal-body { padding: 20px 24px 24px; background: var(--surface); }
+  .modal-steps { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+  .modal-step { display: flex; align-items: center; gap: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 11px 14px; }
+  .modal-step-icon { font-size: 16px; flex-shrink: 0; }
+  .modal-step-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .modal-step-text strong { color: var(--text); font-weight: 700; }
+  .modal-close {
+    width: 100%; background: var(--accent); color: #fff; border: none;
+    padding: 13px 28px; border-radius: 10px;
+    font-family: var(--font); font-size: 14px; font-weight: 700;
+    cursor: pointer !important; transition: all .15s; letter-spacing: .1px;
+  }
+  .modal-close:hover { background: #245a42; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+  /* ══════════════════════════════════════════
+     MODE SELECTION MODAL
+     ══════════════════════════════════════════ */
+  #modeModal {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.52);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; animation: overlayFadeIn .2s ease;
+  }
+  #modeModal.open { display: flex; }
+  @keyframes overlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .mode-modal-box {
+    background: var(--surface); border-radius: 20px;
+    width: 100%; max-width: 440px; overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.28);
+    animation: modalSlideIn .28s cubic-bezier(.34,1.3,.64,1);
+  }
+  @keyframes modalSlideIn { from { opacity: 0; transform: scale(.92) translateY(14px); } to { opacity: 1; transform: none; } }
+  .mode-modal-header { padding: 22px 22px 16px; border-bottom: 1px solid var(--border); }
+  .mode-modal-title { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 5px; }
+  .mode-modal-sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  .mode-modal-options { padding: 16px 22px; display: flex; flex-direction: column; gap: 10px; }
+  .mode-option-card {
+    border: 2px solid var(--border); border-radius: var(--radius);
+    padding: 14px 44px 14px 14px; cursor: pointer !important;
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--bg); transition: border-color .18s, background .18s;
+    position: relative; user-select: none;
+  }
+  .mode-option-card:hover { background: var(--surface2); border-color: #c0b8a8; }
+  .mode-option-card.selected { border-color: var(--accent); background: var(--accent-bg); }
+  .mode-option-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .mode-option-icon.anon { background: #ede9fe; }
+  .mode-option-icon.pub  { background: var(--accent-bg); }
+  .mode-option-body { flex: 1; }
+  .mode-option-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 3px; display: flex; align-items: center; gap: 7px; }
+  .mode-option-badge { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; }
+  .mode-option-badge.anon { background: #ede9fe; color: #5b21b6; }
+  .mode-option-badge.pub  { background: var(--accent-bg); color: var(--accent); }
+  .mode-option-desc { font-size: 12px; color: var(--text-muted); line-height: 1.55; }
+  .mode-radio { position: absolute; top: 50%; right: 14px; transform: translateY(-50%); width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; transition: border-color .18s, background .18s; flex-shrink: 0; }
+  .mode-option-card.selected .mode-radio { border-color: var(--accent); background: var(--accent); }
+  .mode-radio-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; opacity: 0; transition: opacity .18s; }
+  .mode-option-card.selected .mode-radio-dot { opacity: 1; }
+  .mode-modal-warning { margin: 0 22px 14px; background: var(--amber-bg); border: 1px solid #f5d48a; border-radius: var(--radius-sm); padding: 10px 14px; display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: #7a4f10; line-height: 1.6; }
+  .mode-modal-warning-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+  .mode-modal-footer { padding: 0 22px 20px; display: flex; gap: 8px; }
+  .mode-modal-cancel { flex: 1; padding: 11px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: transparent; font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer !important; transition: background .15s, border-color .15s; }
+  .mode-modal-cancel:hover { background: var(--surface2); border-color: #c0b8a8; }
+  .mode-modal-submit { flex: 2; padding: 11px; border-radius: var(--radius-sm); border: none; background: var(--accent); color: #fff; font-family: var(--font); font-size: 13px; font-weight: 700; cursor: pointer !important; transition: background .15s, transform .15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .mode-modal-submit:hover { background: #245a42; transform: translateY(-1px); }
+
+  .divider { height: 1px; background: var(--border); margin: 0; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) { .form-layout { grid-template-columns: 1fr; gap: 32px; } }
+  @media (max-width: 768px) {
+    .hero h1 { letter-spacing: -0.01em; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .hero { grid-template-columns: 1fr; gap: 36px; padding: 40px 20px 48px; }
+    .hero-visual { display: none; }
+    .hero-stats { grid-template-columns: repeat(3, 1fr); gap: 7px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .charts-grid { grid-template-columns: 1fr; }
+    .anon-options { grid-template-columns: 1fr; }
+    .coming-soon-banner { padding: 36px 24px; }
+    section { padding: 44px 20px; }
+  }
+  @media (max-width: 480px) {
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .hero-stats .hero-stat-item:last-child { grid-column: 1 / 3; }
+    .tl-card-header { flex-direction: column; gap: 6px; }
+    .hero-actions { flex-direction: column; }
+    .btn { justify-content: center; width: 100%; }
+    .tl-footer { flex-direction: column; align-items: flex-start; }
+    .tl-tanggapan-btn { width: 100%; justify-content: center; }
+    .progress-steps { gap: 8px; }
+    .progress-stat { min-width: calc(50% - 4px); flex: none; }
+    .mode-modal-box { border-radius: 16px; }
+    .mode-modal-header { padding: 18px 18px 14px; }
+    .mode-modal-options { padding: 12px 18px; }
+    .mode-modal-warning { margin: 0 18px 12px; }
+    .mode-modal-footer { padding: 0 18px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- MODE SELECTION MODAL -->
+<div id="modeModal" role="dialog" aria-modal="true" aria-labelledby="modeModalTitle" onclick="handleModeOverlayClick(event)">
+  <div class="mode-modal-box">
+    <div class="mode-modal-header">
+      <div class="mode-modal-title" id="modeModalTitle">Pilih Mode Pengiriman</div>
+      <div class="mode-modal-sub">Sebelum aspirasimu terkirim, pilih apakah namamu akan ditampilkan atau disembunyikan di timeline publik.</div>
+    </div>
+    <div class="mode-modal-options">
+      <div class="mode-option-card" id="modeCardAnon" onclick="selectMode('anon')" role="radio" aria-checked="false" tabindex="0">
+        <div class="mode-option-icon anon">🎭</div>
+        <div class="mode-option-body">
+          <div class="mode-option-title">Anonim<span class="mode-option-badge anon">Privat</span></div>
+          <div class="mode-option-desc">Namamu <strong>tidak akan ditampilkan</strong> di timeline. Identitasmu tetap tersimpan secara internal oleh Dewan untuk keperluan tindak lanjut.</div>
+        </div>
+        <div class="mode-radio"><div class="mode-radio-dot"></div></div>
+      </div>
+      <div class="mode-option-card selected" id="modeCardPub" onclick="selectMode('pub')" role="radio" aria-checked="true" tabindex="0">
+        <div class="mode-option-icon pub">👤</div>
+        <div class="mode-option-body">
+          <div class="mode-option-title">Tampilkan Identitas<span class="mode-option-badge pub">Publik</span></div>
+          <div class="mode-option-desc">Nama dan NPM kamu akan <strong>terlihat</strong> oleh semua orang di timeline aspirasi. Pastikan kamu nyaman dengan ini.</div>
+        </div>
+        <div class="mode-radio"><div class="mode-radio-dot"></div></div>
+      </div>
+    </div>
+    <div class="mode-modal-warning">
+      <span class="mode-modal-warning-icon">⚠️</span>
+      <span>Meskipun memilih <strong>Anonim</strong>, identitas aslimu <strong>tetap direkam secara internal</strong> oleh Dewan untuk keperluan verifikasi dan akuntabilitas.</span>
+    </div>
+    <div class="mode-modal-footer">
+      <button class="mode-modal-cancel" onclick="closeModeModal()">Batal</button>
+      <button class="mode-modal-submit" id="modeSubmitBtn" onclick="confirmModeAndSubmit()">
+        Kirim Aspirasi
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo">
+      <img src="LogoDewan.png" alt="Logo Kawal HIFI" class="nav-logo-img">
+      <span class="nav-logo-text">Kawal HIFI</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#timeline">Timeline</a></li>
+      <li><a href="#statistik">Statistik</a></li>
+      <li><a href="#form-section" class="nav-cta">Kirim Aspirasi</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <a href="#timeline" onclick="closeNav()">Timeline Aspirasi</a>
+  <a href="#statistik" onclick="closeNav()">Statistik</a>
+  <a href="#form-section" onclick="closeNav()">Kirim Aspirasi</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-dot"></div>
+      Platform Aspirasi Warga HIFI
+    </div>
+    <h1>Dari Hati,<br/>Untuk <em>HIFI.</em></h1>
+    <p class="hero-desc">Punya ide, pertanyaan, atau keluhan seputar HIFI, Prodi, Fakultas, maupun Departemen? Yuk, sampaikan di sini!</p>
+    <div class="hero-actions">
+      <a href="#form-section" class="btn btn-primary">✦ Kirim Aspirasimu</a>
+      <a href="#timeline" class="btn btn-ghost">Lihat Timeline</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat-item" data-stat="total">
+        <div class="hero-stat-icon">📋</div>
+        <div class="hero-stat-num" id="totalCount">—</div>
+        <div class="hero-stat-label">Total Aspirasi</div>
+        <div class="hero-stat-bar"><div class="hero-stat-fill" id="totalBar" style="background:var(--accent);width:100%"></div></div>
+      </div>
+      <div class="hero-stat-item" data-stat="real">
+        <div class="hero-stat-icon">✅</div>
+        <div class="hero-stat-num" style="color:var(--accent)" id="realCount">—</div>
+        <div class="hero-stat-label">Direalisasikan</div>
+        <div class="hero-stat-bar"><div class="hero-stat-fill" id="realBar" style="background:var(--accent);"></div></div>
+      </div>
+      <div class="hero-stat-item" data-stat="disampaikan">
+        <div class="hero-stat-icon">📤</div>
+        <div class="hero-stat-num" style="color:var(--amber)" id="disampaikanCount">—</div>
+        <div class="hero-stat-label">Disampaikan</div>
+        <div class="hero-stat-bar"><div class="hero-stat-fill" id="disampaikanBar" style="background:var(--amber);"></div></div>
+      </div>
+      <div class="hero-stat-item" data-stat="tolak">
+        <div class="hero-stat-icon">❌</div>
+        <div class="hero-stat-num" style="color:var(--red)" id="ditolakCount">—</div>
+        <div class="hero-stat-label">Ditolak</div>
+        <div class="hero-stat-bar"><div class="hero-stat-fill" id="ditolakBar" style="background:var(--red);"></div></div>
+      </div>
+      <div class="hero-stat-item" data-stat="noresponse">
+        <div class="hero-stat-icon">🔕</div>
+        <div class="hero-stat-num" style="color:#9ca3af" id="noResponseCount">—</div>
+        <div class="hero-stat-label">Tdk Ada Tanggapan</div>
+        <div class="hero-stat-bar"><div class="hero-stat-fill" id="noResponseBar" style="background:#9ca3af;"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div id="hero-preview-cards">
+      <div class="loading-state" style="padding:32px 16px;">
+        <div class="loading-spinner"></div>
+        <div>Memuat aspirasi terbaru…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="timeline">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-label">📋 Timeline</div>
+      <h2 class="section-title">Semua Aspirasi</h2>
+      <p class="section-sub">Terupdate secara real-time setiap ada kiriman baru dari warga HIFI.</p>
+    </div>
+    <div class="filter-bars-wrap">
+      <div class="filter-bar">
+        <span class="filter-label">Tujuan:</span>
+        <select class="filter-select" onchange="setFilterSelect('purpose', this.value)">
+          <option value="all">Semua</option>
+          <option value="Dewan">Dewan</option>
+          <option value="HIFI">HIFI</option>
+          <option value="Prodi">Prodi</option>
+          <option value="Fakultas">Fakultas</option>
+          <option value="Departemen">Departemen</option>
+          <option value="Rektorat">Rektorat</option>
+        </select>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-label">Tipe:</span>
+        <select class="filter-select" onchange="setFilterSelect('type', this.value)">
+          <option value="all">Semua</option>
+          <option value="Administrasi">Administrasi</option>
+          <option value="Akademik">Akademik</option>
+          <option value="Beasiswa">Beasiswa</option>
+          <option value="Fasilitas">Fasilitas</option>
+          <option value="Pelayanan">Pelayanan</option>
+        </select>
+      </div>
+      <div class="filter-bar">
+        <span class="filter-label">Progress:</span>
+        <select class="filter-select" onchange="setFilterSelect('progress', this.value)">
+          <option value="all">Semua</option>
+          <option value="Diterima">Diterima</option>
+          <option value="Disampaikan">Disampaikan</option>
+          <option value="Direalisasikan">Direalisasikan</option>
+          <option value="Ditolak">Ditolak</option>
+          <option value="Tidak ada tanggapan">Tidak ada tanggapan</option>
+        </select>
+      </div>
+    </div>
+    <div class="timeline" id="timeline-list">
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <div>Memuat data aspirasi…</div>
+      </div>
+    </div>
+    <button class="show-more-btn" id="showMoreBtn" style="display:none;" onclick="showMore()">Tampilkan lebih banyak ↓</button>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STATISTIK -->
+<section id="statistik" style="background:var(--surface2);">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-label">📊 Statistik</div>
+      <h2 class="section-title">Statistik Data Aspirasi</h2>
+      <p class="section-sub">Data distribusi aspirasi berdasarkan kategori dan progres penanganan.</p>
+    </div>
+    <div class="progress-steps" id="summary-stats"></div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-card-title">Berdasarkan Tujuan</div>
+        <div class="chart-card-sub">Dewan, HIFI, Prodi, Fakultas, Departemen</div>
+        <div class="chart-wrap"><canvas id="chartPurpose"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Berdasarkan Tipe</div>
+        <div class="chart-card-sub">Administrasi, Akademik, Beasiswa, Fasilitas</div>
+        <div class="chart-wrap"><canvas id="chartType"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Status Progress</div>
+        <div class="chart-card-sub">Diterima, Disampaikan, Direalisasikan, dll.</div>
+        <div class="chart-wrap"><canvas id="chartProgress"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Distribusi per Angkatan</div>
+        <div class="chart-card-sub">2020 — 2025</div>
+        <div class="chart-wrap"><canvas id="chartAngkatan"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FORM -->
+<section id="form-section">
+  <div class="section-inner">
+    <div class="form-layout">
+      <div>
+        <div class="section-label">✍️ Form Aspirasi</div>
+        <h2 class="section-title" style="margin-bottom:12px;">Kirim Aspirasimu</h2>
+        <p style="color:var(--text-muted);font-size:14.5px;line-height:1.75;margin-bottom:20px;">Suaramu sangat berarti bagi kami. Aspirasi yang masuk akan ditinjau oleh Dewan HIFI dan diteruskan ke pihak terkait sesuai tujuan yang kamu pilih.</p>
+        <div style="background:var(--accent-bg);border-radius:var(--radius);padding:18px 20px;border:1px solid #b7e4c7;">
+          <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:10px;">📌 Yang perlu kamu tahu:</div>
+          <ul style="font-size:13px;color:#2d6a4f;line-height:1.8;padding-left:16px;">
+            <li>Aspirasimu akan tampil di timeline publik</li>
+            <li>Kamu akan memilih mode identitas sebelum mengirim</li>
+            <li>Dewan HIFI akan menghubungi via kontak yang kamu berikan jika ada perkembangan</li>
+            <li>Setiap aspirasi akan dikategorikan dan ditindaklanjuti</li>
+            <li>Identitas aslimu <strong>selalu tersimpan secara internal</strong> meskipun kirim anonim</li>
+          </ul>
+        </div>
+        <div style="margin-top:16px;background:var(--red-bg);border:1px solid #f5c0bb;border-radius:var(--radius-sm);padding:10px 14px;font-size:12.5px;color:#7a1010;display:flex;gap:7px;align-items:center;">
+          <span>*</span> <span>Tanda <strong>*</strong> menandakan field wajib diisi.</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="form-grid">
+
+          <!-- Nama Lengkap -->
+          <div class="form-group">
+            <label>Nama Lengkap <span class="req">*</span></label>
+            <input type="text" id="f-name" placeholder="Nama kamu..." />
+          </div>
+
+          <!-- NPM -->
+          <div class="form-group">
+            <label>NPM <span class="req">*</span></label>
+            <input type="text" id="f-npm" placeholder="1403102xxxxxx" maxlength="13" />
+          </div>
+
+          <!-- Angkatan -->
+          <div class="form-group">
+            <label>Angkatan <span class="req">*</span></label>
+            <select id="f-angkatan">
+              <option value="">Pilih angkatan...</option>
+              <option>2020</option><option>2021</option><option>2022</option>
+              <option>2023</option><option>2024</option><option>2025</option>
+              <option value="other">Lainnya (isi manual)</option>
+            </select>
+            <div class="custom-other" id="angkatan-other-wrap">
+              <input type="number" id="f-angkatan-custom" placeholder="Masukkan tahun angkatan..." min="2000" max="2030" />
+            </div>
+          </div>
+
+          <!-- Tujuan -->
+          <div class="form-group">
+            <label>Tujuan <span>(kepada siapa?)</span> <span class="req">*</span></label>
+            <select id="f-purpose">
+              <option value="">Pilih tujuan...</option>
+              <option>Dewan</option><option>HIFI</option><option>Prodi</option>
+              <option>Fakultas</option><option>Departemen</option><option>Rektorat</option>
+              <option value="other">Lainnya (isi manual)</option>
+            </select>
+            <div class="custom-other" id="purpose-other-wrap">
+              <input type="text" id="f-purpose-custom" placeholder="Tuliskan tujuan aspirasi kamu..." />
+            </div>
+          </div>
+
+          <!-- Tipe Aspirasi -->
+          <div class="form-group">
+            <label>Tipe Aspirasi <span>(kategori)</span> <span class="req">*</span></label>
+            <select id="f-type">
+              <option value="">Pilih tipe...</option>
+              <option>Administrasi</option><option>Akademik</option>
+              <option>Beasiswa</option><option>Fasilitas</option><option>Pelayanan</option>
+              <option value="other">Lainnya (isi manual)</option>
+            </select>
+            <div class="custom-other" id="type-other-wrap">
+              <input type="text" id="f-type-custom" placeholder="Tuliskan tipe aspirasi kamu..." />
+            </div>
+          </div>
+
+          <!-- Kontak -->
+          <div class="form-group">
+            <label>Kontak <span>(WA / IG)</span> <span class="req">*</span></label>
+            <input type="text" id="f-contact" placeholder="08xx / @username_ig" />
+            <div class="form-warning">
+              <span class="form-warning-icon">⚠️</span>
+              <span>Kontak ini akan digunakan Dewan HIFI untuk menghubungi kamu jika ada perkembangan. Pastikan aktif &amp; bisa dihubungi.</span>
+            </div>
+          </div>
+
+          <!-- Isi Aspirasi -->
+          <div class="form-group full">
+            <label>Isi Aspirasi <span>(jelaskan sejelas mungkin)</span> <span class="req">*</span></label>
+            <textarea id="f-text" placeholder="Tuliskan aspirasimu dengan jelas di sini...&#10;&#10;Bila ada bukti foto atau screenshot, mohon sertakan link drive dan pastikan aksesnya dapat dibuka."></textarea>
+          </div>
+
+          <!-- Link Bukti (opsional) -->
+          <div class="form-group full">
+            <label>Link Bukti <span>(Google Drive, opsional)</span></label>
+            <input type="url" id="f-drive" placeholder="https://drive.google.com/..." />
+            <div class="form-warning" style="background:var(--blue-bg);border-color:#bfdbfe;color:#1e40af;">
+              <span class="form-warning-icon">🔒</span>
+              <span>Bersifat rahasia, tidak ditampilkan di publik. Link hanya dapat diakses oleh Dewan HIFI.</span>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="form-group full">
+            <button class="submit-btn" id="submit-btn" onclick="openModeModal()">
+              <span>✦</span> Kirim Aspirasi Sekarang
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMING SOON -->
+<section style="background:var(--bg);">
+  <div class="section-inner">
+    <div class="coming-soon-banner">
+      <div class="cs-noise"></div>
+      <div style="position:relative;">
+        <div class="cs-chip">🔬 Segera Hadir</div>
+        <h2 class="cs-title">Analisis Sentimen<br/><em>Berbasis AI</em></h2>
+        <p class="cs-desc">Kami sedang mengembangkan fitur analisis sentimen otomatis menggunakan kecerdasan buatan untuk memahami emosi dan urgensi di balik setiap aspirasi yang masuk.</p>
+        <div class="cs-features">
+          <div class="cs-feature">😊 Deteksi Sentimen</div>
+          <div class="cs-feature">📈 Tren Topik</div>
+          <div class="cs-feature">🚨 Deteksi Urgensi</div>
+          <div class="cs-feature">🏷️ Auto-Tagging</div>
+          <div class="cs-feature">📊 Word Cloud</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <strong>HIFI Aspirasi</strong> — Platform Aspirasi Himpunan Mahasiswa Fisika FMIPA Unpad &nbsp;·&nbsp; Dibuat dengan ❤️ untuk warga HIFI
+</footer>
+
+<!-- TANGGAPAN MODAL -->
+<div class="modal-overlay" id="tanggapanModal" onclick="handleTanggapanOverlayClick(event)">
+  <div style="background:var(--surface);border-radius:var(--radius-lg);max-width:520px;width:100%;box-shadow:var(--shadow-lg);overflow:hidden;transform:scale(.95);transition:transform .25s cubic-bezier(.34,1.56,.64,1);" id="tanggapanModalInner">
+    <div style="background:linear-gradient(135deg,#1a4731,#2d6a4f);padding:22px 24px 18px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:4px;">Detail Aspirasi</div>
+        <div style="font-size:17px;font-weight:800;color:#fff;">Tanggapan Resmi</div>
+      </div>
+      <button class="tanggapan-close-btn" onclick="closeTanggapan()" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;">✕</button>
+    </div>
+    <div id="tanggapanContent" style="padding:22px 24px 28px;max-height:70vh;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- THANK YOU MODAL -->
+<div class="modal-overlay" id="thankYouModal">
+  <div id="thankYouModalInner">
+    <canvas class="modal-confetti-canvas" id="celebrationCanvas"></canvas>
+    <div class="modal-top">
+      <svg class="modal-rings" viewBox="0 0 140 140" fill="none">
+        <circle cx="70" cy="70" r="65" stroke="white" stroke-width="1"/>
+        <circle cx="70" cy="70" r="50" stroke="white" stroke-width="1"/>
+        <circle cx="70" cy="70" r="35" stroke="white" stroke-width="1"/>
+      </svg>
+      <span class="modal-sparkle">🌿</span>
+      <div class="modal-top-title">Aspirasi Terkirim!</div>
+      <div class="modal-top-sub">Terima kasih sudah menyuarakan pendapatmu, Warga HIFI! 💚</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-steps">
+        <div class="modal-step">
+          <span class="modal-step-icon">📬</span>
+          <div class="modal-step-text"><strong>Diterima</strong> — Aspirasimu sudah masuk ke sistem kami.</div>
+        </div>
+        <div class="modal-step">
+          <span class="modal-step-icon">🔍</span>
+          <div class="modal-step-text"><strong>Ditinjau</strong> — Dewan HIFI akan mereviu aspirasimu secepatnya.</div>
+        </div>
+        <div class="modal-step">
+          <span class="modal-step-icon">📡</span>
+          <div class="modal-step-text"><strong>Disampaikan</strong> — Aspirasi diteruskan ke pihak terkait.</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✓ Kembali ke Timeline</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════
+   AIRTABLE CONFIG
+   ════════════════════════════════════════════════ */
+// API endpoint uses Vercel serverless function
+// Credentials are stored securely in environment variables
+const API_ENDPOINT = '/api/airtable';
+
+let allData = [];
+let activeFilters = { purpose: 'all', type: 'all', progress: 'all' };
+let visibleCount = 5;
+
+/* ── LOAD DATA ── */
+async function loadData() {
+  try {
+    const response = await fetch(API_ENDPOINT);
+    if (!response.ok) throw new Error('Gagal memuat data');
+    const rawData = await response.json();
+    allData = rawData.records.map(record => {
+      const f = record.fields;
+      return {
+        id: record.id,
+        name: f['Name'] || '',
+        npm: f['NPM'] || '',
+        angkatan: f['Angkatan'] || '',
+        purpose: f['Tujuan Aspirasi'] || '',
+        type: f['Tipe Aspirasi'] || '',
+        contact: f['Kontak'] || '',
+        text: f['Isi Aspirasi'] || '',
+        progress: f['Progres Aspirasi'] || 'Diterima',
+        anon: f['Tipe Identitas Pengirim'] === 'Anonim',
+        date: f['Tanggal Pengirim'] || '',
+        tanggapan: f['Tanggapan'] || ''
+      };
+    });
+    renderHeroPreview();
+    renderTimeline();
+    initCharts();
+  } catch (error) {
+    console.error('Error loadData:', error);
+    document.getElementById('timeline-list').innerHTML = '<div style="padding:20px;text-align:center;">Gagal memuat aspirasi dari server.</div>';
+  }
+}
+
+/* ── HELPERS ── */
+function getFilteredData() {
+  return allData.filter(d => {
+    if (activeFilters.purpose !== 'all' && d.purpose !== activeFilters.purpose) return false;
+    if (activeFilters.type !== 'all' && d.type !== activeFilters.type) return false;
+    if (activeFilters.progress !== 'all' && d.progress !== activeFilters.progress) return false;
+    return true;
+  }).sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+function progressColor(p) {
+  if (p === 'Diterima') return { dot: 'dot-amber', badge: 'badge-blue' };
+  if (p === 'Direalisasikan') return { dot: '', badge: 'badge-green' };
+  if (p === 'Disampaikan') return { dot: 'dot-amber', badge: 'badge-amber' };
+  if (p === 'Ditolak') return { dot: 'dot-red', badge: 'badge-red' };
+  return { dot: 'dot-gray', badge: 'badge-gray' };
+}
+function typeColor(t) {
+  const m = { 'Akademik': 'badge-blue', 'Fasilitas': 'badge-blue', 'Beasiswa': 'badge-amber', 'Administrasi': 'badge-gray', 'Pelayanan': 'badge-green' };
+  return m[t] || 'badge-gray';
+}
+function purposeColor(p) {
+  const m = { 'Dewan': 'badge-red', 'HIFI': 'badge-green', 'Prodi': 'badge-blue', 'Fakultas': 'badge-amber', 'Departemen': 'badge-gray', 'Rektorat': 'badge-red' };
+  return m[p] || 'badge-gray';
+}
+function formatDate(d) {
+  const dateObj = new Date(d);
+  return dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) + ' - ' + dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+}
+function getInitials(name) {
+  if (!name || name === 'Anonim') return '🙈';
+  return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+}
+const avatarColors = ['#d8f3dc', '#fef3dc', '#eff6ff', '#fdecea', '#f3e8ff'];
+const avatarTextColors = ['#2d6a4f', '#a06a10', '#2563eb', '#c0392b', '#6b21a8'];
+function escapeHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── HERO PREVIEW ── */
+function renderHeroPreview() {
+  const container = document.getElementById('hero-preview-cards');
+  const preview = [...allData].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+  if (!preview.length) { container.innerHTML = `<div style="text-align:center;padding:24px 0;color:var(--text-muted);font-size:13px;">Belum ada aspirasi masuk.</div>`; return; }
+  container.innerHTML = preview.map((d, i) => {
+    const colorIdx = i % avatarColors.length;
+    const pc = progressColor(d.progress);
+    return `<div class="mini-card"><div class="mini-avatar" style="background:${avatarColors[colorIdx]};color:${avatarTextColors[colorIdx]};">${getInitials(d.name)}</div><div class="mini-card-body"><div class="mini-card-name">${escapeHtml(d.anon ? 'Anonim' : d.name)} ${d.angkatan ? '· ' + d.angkatan : ''}</div><div class="mini-card-text">${escapeHtml((d.text||'').substring(0,80))}${(d.text||'').length>80?'…':''}</div><div><span class="mini-badge ${pc.badge}">${escapeHtml(d.progress)}</span> <span class="mini-badge ${typeColor(d.type)}">${escapeHtml(d.type)}</span></div></div></div>`;
+  }).join('');
+}
+
+/* ── TIMELINE RENDER ── */
+function renderTimeline() {
+  const filtered = getFilteredData();
+  const list = document.getElementById('timeline-list');
+  const showBtn = document.getElementById('showMoreBtn');
+  const toShow = filtered.slice(0, visibleCount);
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔍</div><div>Tidak ada aspirasi yang sesuai filter.</div></div>`;
+    showBtn.style.display = 'none'; return;
+  }
+  list.innerHTML = toShow.map((d, i) => {
+    const pc = progressColor(d.progress);
+    const colorIdx = i % avatarColors.length;
+    return `<div class="timeline-item" data-id="${d.id}"><div class="timeline-dot ${pc.dot}"></div><div class="tl-card"><div class="tl-card-header"><div class="tl-meta">${d.anon?`<span style="font-size:20px;">🙈</span>`:`<div style="width:32px;height:32px;border-radius:50%;background:${avatarColors[colorIdx]};color:${avatarTextColors[colorIdx]};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">${getInitials(d.name)}</div>`}<div><div class="tl-name">${escapeHtml(d.anon?'Anonim':d.name)} ${!d.anon&&d.npm?`<span style="font-size:11px;color:var(--text-muted);font-weight:400;">(${escapeHtml(d.npm)})</span>`:''}</div><div style="font-size:11.5px;color:var(--text-muted);">Angkatan ${escapeHtml(String(d.angkatan||''))}</div></div></div><div class="tl-date">${formatDate(d.date)}</div></div><div class="tl-text">${escapeHtml(d.text)}</div><div class="tl-footer"><div class="tl-tags"><span class="tl-tag ${pc.badge}">${escapeHtml(d.progress)}</span><span class="tl-tag ${purposeColor(d.purpose)}">${escapeHtml(d.purpose)}</span><span class="tl-tag ${typeColor(d.type)}">${escapeHtml(d.type)}</span></div><button class="tl-tanggapan-btn" onclick="openTanggapan('${d.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Tanggapan</button></div></div></div>`;
+  }).join('');
+  showBtn.style.display = filtered.length > visibleCount ? 'block' : 'none';
+}
+function setFilterSelect(key, val) { activeFilters[key] = val; visibleCount = 5; renderTimeline(); }
+function showMore() { visibleCount += 5; renderTimeline(); }
+
+/* ── CHARTS ── */
+let charts = {};
+function initCharts() {
+  const data = allData;
+  const purposeCounts = { Dewan:0, HIFI:0, Prodi:0, Fakultas:0, Departemen:0, Rektorat:0 };
+  const typeCounts    = { Administrasi:0, Akademik:0, Beasiswa:0, Fasilitas:0, Pelayanan:0 };
+  const progressCounts= { 'Diterima':0,'Disampaikan':0,'Direalisasikan':0,'Ditolak':0,'Tidak ada tanggapan':0 };
+  const angkatanCounts= { 2020:0, 2021:0, 2022:0, 2023:0, 2024:0, 2025:0 };
+  data.forEach(d => {
+    if (purposeCounts[d.purpose]!==undefined) purposeCounts[d.purpose]++;
+    if (typeCounts[d.type]!==undefined) typeCounts[d.type]++;
+    if (progressCounts[d.progress]!==undefined) progressCounts[d.progress]++;
+    if (angkatanCounts[d.angkatan]!==undefined) angkatanCounts[d.angkatan]++;
+  });
+  document.getElementById('summary-stats').innerHTML = [
+    { num: data.length, label: 'Total Aspirasi', color: 'var(--accent)' },
+    { num: progressCounts['Direalisasikan'], label: 'Direalisasikan', color: 'var(--accent)' },
+    { num: progressCounts['Disampaikan'], label: 'Disampaikan', color: 'var(--amber)' },
+    { num: progressCounts['Diterima'], label: 'Diterima', color: 'var(--blue)' },
+    { num: progressCounts['Ditolak'], label: 'Ditolak', color: 'var(--red)' },
+    { num: progressCounts['Tidak ada tanggapan'], label: 'Tidak ada tanggapan', color: '#aaa' },
+  ].map(s=>`<div class="progress-stat"><div class="progress-stat-num" style="color:${s.color}">${s.num}</div><div class="progress-stat-label">${s.label}</div></div>`).join('');
+  const setTxt = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  setTxt('totalCount', data.length);
+  setTxt('realCount', progressCounts['Direalisasikan']||0);
+  setTxt('disampaikanCount', progressCounts['Disampaikan']||0);
+  setTxt('ditolakCount', progressCounts['Ditolak']||0);
+  setTxt('noResponseCount', progressCounts['Tidak ada tanggapan']||0);
+  const total = data.length || 1;
+  const setW = (id, val) => { const el=document.getElementById(id); if(el) el.style.width=val; };
+  setTimeout(() => {
+    setW('totalBar','100%');
+    setW('realBar', ((progressCounts['Direalisasikan']||0)/total*100)+'%');
+    setW('disampaikanBar', ((progressCounts['Disampaikan']||0)/total*100)+'%');
+    setW('ditolakBar', ((progressCounts['Ditolak']||0)/total*100)+'%');
+    setW('noResponseBar', ((progressCounts['Tidak ada tanggapan']||0)/total*100)+'%');
+  }, 200);
+  const chartOpts = { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:12,font:{family:'Plus Jakarta Sans',size:11}}}} };
+  const colors = ['#2d6a4f','#52b788','#e9a23b','#c0392b','#2563eb','#7c3aed'];
+  if(charts.purpose) charts.purpose.destroy();
+  charts.purpose = new Chart(document.getElementById('chartPurpose'),{type:'doughnut',data:{labels:Object.keys(purposeCounts),datasets:[{data:Object.values(purposeCounts),backgroundColor:colors,borderWidth:0,hoverOffset:4}]},options:{...chartOpts}});
+  if(charts.type) charts.type.destroy();
+  charts.type = new Chart(document.getElementById('chartType'),{type:'doughnut',data:{labels:Object.keys(typeCounts),datasets:[{data:Object.values(typeCounts),backgroundColor:['#2563eb','#52b788','#e9a23b','#7c3aed'],borderWidth:0,hoverOffset:4}]},options:{...chartOpts}});
+  if(charts.progress) charts.progress.destroy();
+  charts.progress = new Chart(document.getElementById('chartProgress'),{type:'bar',data:{labels:Object.keys(progressCounts).map(l=>l.length>12?l.substring(0,12)+'…':l),datasets:[{data:Object.values(progressCounts),backgroundColor:['#e9a23b','#52b788','#c0392b','#aaa'],borderRadius:6,borderSkipped:false}]},options:{...chartOpts,indexAxis:'y',plugins:{...chartOpts.plugins,legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Plus Jakarta Sans',size:11}}},y:{grid:{display:false},ticks:{font:{family:'Plus Jakarta Sans',size:11}}}}}});
+  if(charts.angkatan) charts.angkatan.destroy();
+  charts.angkatan = new Chart(document.getElementById('chartAngkatan'),{type:'bar',data:{labels:Object.keys(angkatanCounts),datasets:[{data:Object.values(angkatanCounts),backgroundColor:'rgba(45,106,79,.85)',borderRadius:6,borderSkipped:false}]},options:{...chartOpts,plugins:{...chartOpts.plugins,legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Plus Jakarta Sans',size:11}}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{family:'Plus Jakarta Sans',size:11},stepSize:1}}}}});
+}
+
+/* ══════════════════════════════════════════════
+   VALIDATION HELPERS
+   ══════════════════════════════════════════════ */
+function setError(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('field-error');
+}
+function clearError(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('field-error');
+}
+function clearAllErrors() {
+  ['f-name','f-npm','f-contact','f-angkatan','f-angkatan-custom',
+   'f-purpose','f-purpose-custom','f-type','f-type-custom','f-text']
+  .forEach(clearError);
+}
+
+/* ══════════════════════════════════════════════
+   MODE SELECTION MODAL
+   ══════════════════════════════════════════════ */
+var pendingMode = 'pub';
+
+function openModeModal() {
+  clearAllErrors();
+
+  const name           = (document.getElementById('f-name')?.value || '').trim();
+  const npm            = (document.getElementById('f-npm')?.value || '').trim();
+  const contact        = (document.getElementById('f-contact')?.value || '').trim();
+  const angkatanRaw    = document.getElementById('f-angkatan')?.value || '';
+  const angkatanCustom = (document.getElementById('f-angkatan-custom')?.value || '').trim();
+  const angkatan       = angkatanRaw === 'other' ? angkatanCustom : angkatanRaw;
+  const purposeRaw     = (document.getElementById('f-purpose')?.value || '').trim();
+  const purpose        = purposeRaw === 'other' ? (document.getElementById('f-purpose-custom')?.value || '').trim() : purposeRaw;
+  const typeRaw        = (document.getElementById('f-type')?.value || '').trim();
+  const type           = typeRaw === 'other' ? (document.getElementById('f-type-custom')?.value || '').trim() : typeRaw;
+  const text           = (document.getElementById('f-text')?.value || '').trim();
+
+  let errors = [];
+
+  if (!name)     { errors.push('Nama Lengkap');    setError('f-name'); }
+  if (!npm)      { errors.push('NPM');             setError('f-npm'); }
+  if (!contact)  { errors.push('Kontak');          setError('f-contact'); }
+  if (!angkatan) {
+    errors.push('Angkatan');
+    setError(angkatanRaw === 'other' ? 'f-angkatan-custom' : 'f-angkatan');
+  }
+  if (!purpose)  {
+    errors.push('Tujuan Aspirasi');
+    setError(purposeRaw === 'other' ? 'f-purpose-custom' : 'f-purpose');
+  }
+  if (!type)     {
+    errors.push('Tipe Aspirasi');
+    setError(typeRaw === 'other' ? 'f-type-custom' : 'f-type');
+  }
+  if (!text)     { errors.push('Isi Aspirasi');    setError('f-text'); }
+
+  if (errors.length > 0) {
+    alert('Mohon lengkapi field berikut:\n• ' + errors.join('\n• '));
+    /* scroll to first error */
+    const firstErr = document.querySelector('.field-error');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  selectMode('pub');
+  document.getElementById('modeModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+/* clear error styling on user input */
+['f-name','f-npm','f-contact','f-angkatan','f-angkatan-custom',
+ 'f-purpose','f-purpose-custom','f-type','f-type-custom','f-text']
+.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => clearError(id));
+  if (el) el.addEventListener('change', () => clearError(id));
+});
+
+function closeModeModal() {
+  document.getElementById('modeModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function selectMode(mode) {
+  pendingMode = mode;
+  const cardAnon = document.getElementById('modeCardAnon');
+  const cardPub  = document.getElementById('modeCardPub');
+  if (mode === 'anon') {
+    cardAnon.classList.add('selected');    cardAnon.setAttribute('aria-checked', 'true');
+    cardPub.classList.remove('selected');  cardPub.setAttribute('aria-checked', 'false');
+  } else {
+    cardPub.classList.add('selected');     cardPub.setAttribute('aria-checked', 'true');
+    cardAnon.classList.remove('selected'); cardAnon.setAttribute('aria-checked', 'false');
+  }
+}
+
+function handleModeOverlayClick(e) {
+  if (e.target === document.getElementById('modeModal')) closeModeModal();
+}
+
+async function confirmModeAndSubmit() {
+  const isAnon = pendingMode === 'anon';
+
+  const btn = document.getElementById('modeSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Mengirim...';
+
+  closeModeModal();
+
+  const mainBtn = document.getElementById('submit-btn');
+  mainBtn.disabled = true;
+  mainBtn.innerHTML = '<span>⏳</span> Mengirim...';
+
+  const name     = (document.getElementById('f-name')?.value || '').trim();
+  const npm      = (document.getElementById('f-npm')?.value || '').trim();
+  const angkatan = (document.getElementById('f-angkatan')?.value || '') === 'other'
+    ? (document.getElementById('f-angkatan-custom')?.value || '').trim()
+    : (document.getElementById('f-angkatan')?.value || '').trim();
+  const purposeRaw = (document.getElementById('f-purpose')?.value || '').trim();
+  const purpose  = purposeRaw === 'other' ? (document.getElementById('f-purpose-custom')?.value || '').trim() : purposeRaw;
+  const typeRaw  = (document.getElementById('f-type')?.value || '').trim();
+  const type     = typeRaw === 'other' ? (document.getElementById('f-type-custom')?.value || '').trim() : typeRaw;
+  const contact  = (document.getElementById('f-contact')?.value || '').trim();
+  const text     = (document.getElementById('f-text')?.value || '').trim();
+  const drive    = (document.getElementById('f-drive')?.value || '').trim();
+
+  const payload = {
+    records: [{
+      fields: {
+        'Name'                   : isAnon ? 'Anonim' : (name || 'Anonim'),
+        'NPM'                    : isAnon ? ''        : npm,
+        'Nama Asli Pengirim'     : name || '',
+        'NPM Asli Pengirim'      : npm  || '',
+        'Angkatan'               : String(angkatan || new Date().getFullYear()),
+        'Tujuan Aspirasi'        : purpose,
+        'Tipe Aspirasi'          : type,
+        'Kontak'                 : contact,
+        'Isi Aspirasi'           : text,
+        'Progres Aspirasi'       : 'Diterima',
+        'Tipe Identitas Pengirim': isAnon ? 'Anonim' : 'Publik',
+        'Link Bukti'             : drive,
+        'Tanggal Pengirim'       : new Date().toISOString()
+      }
+    }]
+  };
+
+  try {
+    const res = await fetch(API_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const errData = await res.json();
+      console.error('Detail Penolakan Airtable:', errData);
+      throw new Error(`Data ditolak oleh server (Status: ${res.status})`);
+    }
+    await loadData();
+    document.getElementById('thankYouModal').classList.add('open');
+    resetForm();
+  } catch (e) {
+    alert('Maaf, aspirasi gagal terkirim. Terjadi kesalahan pada sistem. Silakan hubungi admin HIFI jika masalah berlanjut.');
+    console.error('Sistem Error:', e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Kirim Aspirasi <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>';
+    mainBtn.disabled = false;
+    mainBtn.innerHTML = '<span>✦</span> Kirim Aspirasi Sekarang';
+  }
+}
+
+/* keyboard support for mode cards */
+document.addEventListener('keydown', function(e) {
+  const modal = document.getElementById('modeModal');
+  if (e.key === 'Escape' && modal.classList.contains('open')) closeModeModal();
+});
+document.querySelectorAll('.mode-option-card').forEach(function(el) {
+  el.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+  });
+});
+
+/* ── FORM HELPERS ── */
+function setupOther(selectId, wrapId) {
+  document.getElementById(selectId).addEventListener('change', function () {
+    document.getElementById(wrapId).classList.toggle('visible', this.value === 'other');
+  });
+}
+setupOther('f-purpose', 'purpose-other-wrap');
+setupOther('f-type', 'type-other-wrap');
+setupOther('f-angkatan', 'angkatan-other-wrap');
+
+function resetForm() {
+  ['f-name','f-npm','f-contact','f-text','f-purpose-custom','f-drive','f-type-custom','f-angkatan-custom'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['f-angkatan','f-purpose','f-type'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  document.querySelectorAll('.custom-other').forEach(el => el.classList.remove('visible'));
+  clearAllErrors();
+  visibleCount = 5;
+  activeFilters = { purpose:'all', type:'all', progress:'all' };
+  document.querySelectorAll('.filter-select').forEach(sel => sel.value = 'all');
+}
+
+/* ── TANGGAPAN MODAL ── */
+function openTanggapan(id) {
+  const d = allData.find(x => String(x.id) === String(id));
+  if (!d) return;
+  const pc = progressColor(d.progress);
+  const hasTanggapan = d.tanggapan && d.tanggapan.trim() !== '';
+  document.getElementById('tanggapanContent').innerHTML = `
+    <div class="tanggapan-aspiration-box"><div class="tanggapan-aspiration-label">Aspirasi</div><div class="tanggapan-aspiration-text">${escapeHtml(d.text)}</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;"><span class="tl-tag ${pc.badge}">${escapeHtml(d.progress)}</span><span class="tl-tag ${purposeColor(d.purpose)}">${escapeHtml(d.purpose)}</span><span class="tl-tag ${typeColor(d.type)}">${escapeHtml(d.type)}</span></div>
+    <div class="tanggapan-divider"></div>
+    <div class="tanggapan-response-label"><span class="tanggapan-response-dot"></span>Tanggapan Resmi</div>
+    ${hasTanggapan
+      ? `<div class="tanggapan-response-text">${escapeHtml(d.tanggapan)}</div>`
+      : `<div class="tanggapan-empty"><div class="tanggapan-empty-icon">🔕</div><div class="tanggapan-empty-text">Belum ada tanggapan resmi untuk aspirasi ini.<br/>Kami akan memperbarui informasi ini segera setelah ada perkembangan.</div></div>`
+    }`;
+  document.getElementById('tanggapanModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeTanggapan() {
+  document.getElementById('tanggapanModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleTanggapanOverlayClick(e) {
+  if (e.target === document.getElementById('tanggapanModal')) closeTanggapan();
+}
+
+/* ── THANK YOU MODAL ── */
+function closeModal() {
+  document.getElementById('thankYouModal').classList.remove('open');
+  const canvas = document.getElementById('celebrationCanvas');
+  if (canvas) { const ctx=canvas.getContext('2d'); ctx.clearRect(0,0,canvas.width,canvas.height); }
+}
+document.getElementById('thankYouModal').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
+document.getElementById('thankYouModal').addEventListener('transitionend', function handler(e) {
+  if (e.propertyName==='opacity' && this.classList.contains('open')) {
+    launchCelebration();
+    this.removeEventListener('transitionend', handler);
+    this.addEventListener('transitionend', handler);
+  }
+});
+
+/* ── CONFETTI ── */
+function launchCelebration() {
+  const modal = document.getElementById('thankYouModalInner');
+  const canvas = document.getElementById('celebrationCanvas');
+  if (!canvas || !modal) return;
+  canvas.width = modal.offsetWidth; canvas.height = modal.offsetHeight;
+  const ctx = canvas.getContext('2d');
+  const colors = ['#2d6a4f','#52b788','#95d5b2','#d8f3dc','#1b4332','#74c69d','#b7e4c7','#40916c'];
+  const pieces = Array.from({length:72}, () => ({
+    x:Math.random()*canvas.width, y:-10-Math.random()*80, r:3+Math.random()*5,
+    color:colors[Math.floor(Math.random()*colors.length)],
+    vx:(Math.random()-.5)*2.5, vy:2.5+Math.random()*3, spin:Math.random()*.3-.15,
+    angle:Math.random()*Math.PI*2, shape:Math.random()>.5?'rect':'circle',
+    w:5+Math.random()*8, h:3+Math.random()*5, opacity:1,
+  }));
+  let frame; let startTime = null; const duration = 2800;
+  function draw(ts) {
+    if (!startTime) startTime = ts;
+    const elapsed = ts - startTime;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p => {
+      p.y+=p.vy; p.x+=p.vx; p.angle+=p.spin; p.vy+=.04;
+      p.opacity = Math.max(0, 1-Math.max(0,elapsed-1800)/1000);
+      ctx.save(); ctx.globalAlpha=p.opacity; ctx.translate(p.x,p.y); ctx.rotate(p.angle); ctx.fillStyle=p.color;
+      if(p.shape==='rect'){ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);}else{ctx.beginPath();ctx.arc(0,0,p.r,0,Math.PI*2);ctx.fill();}
+      ctx.restore();
+    });
+    if (elapsed<duration){frame=requestAnimationFrame(draw);}else{ctx.clearRect(0,0,canvas.width,canvas.height);}
+  }
+  if (frame) cancelAnimationFrame(frame);
+  frame = requestAnimationFrame(draw);
+}
+window.addEventListener('resize', () => {
+  const modal=document.getElementById('thankYouModalInner'), canvas=document.getElementById('celebrationCanvas');
+  if(modal&&canvas){canvas.width=modal.offsetWidth;canvas.height=modal.offsetHeight;}
+});
+
+/* ── NAV ── */
+function toggleNav() { document.getElementById('mobileNav').classList.toggle('open'); }
+function closeNav() { document.getElementById('mobileNav').classList.remove('open'); }
+
+/* ── CUSTOM CURSOR ── */
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  const dot = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  if (dot && ring) {
+    let mx=-100, my=-100, rx=-100, ry=-100;
+    document.addEventListener('mousemove', e=>{mx=e.clientX;my=e.clientY;});
+    (function loop(){
+      rx+=(mx-rx)*.14; ry+=(my-ry)*.14;
+      dot.style.left=mx+'px'; dot.style.top=my+'px';
+      ring.style.left=rx+'px'; ring.style.top=ry+'px';
+      requestAnimationFrame(loop);
+    })();
+    const interactive = 'a,button,input,select,textarea,label,.filter-select,.anon-toggle,.mini-card,.tl-card,.hero-stat-item,.tl-tanggapan-btn,.tanggapan-close-btn,.mode-option-card';
+    document.querySelectorAll(interactive).forEach(el=>{
+      el.addEventListener('mouseenter',()=>document.body.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-hover'));
+    });
+    document.addEventListener('mouseleave',()=>{mx=-100;my=-100;});
+  }
+}
+
+/* ── INIT ── */
+loadData();
+</script>
+</body>
+</html>
