@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js"></script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Kawal HIFI — Dari Hati, Untuk HIFI</title>
@@ -265,11 +266,54 @@
     color: var(--text-muted); font-family: var(--font); font-size: 14px; font-weight: 600;
     cursor: pointer !important; margin-top: 8px; transition: all .15s;
   }
+  .tl-date-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .sentiment-bar-mini { width: 110px; }
+  .sentiment-bar-label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 10px; font-weight: 600; color: var(--text-muted); margin-bottom: 3px;
+  }
+  .sentiment-bar-label-left { display: flex; align-items: center; gap: 4px; }
+  .sentiment-bar-track {
+    width: 100%; height: 5px; background: var(--surface2);
+    border-radius: 99px; overflow: hidden;
+  }
+  .sentiment-bar-fill {
+    height: 100%; border-radius: 99px;
+    transition: width 0.8s cubic-bezier(.4,0,.2,1);
+  }
+  .sentiment-bar-fill.positif { background: var(--accent-light); }
+  .sentiment-bar-fill.netral  { background: #9ca3af; }
+  .sentiment-bar-fill.negatif { background: var(--red); }
   .show-more-btn:hover { border-color: var(--accent-light); color: var(--accent); background: var(--accent-bg); }
   .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
   .empty-state-icon { font-size: 36px; margin-bottom: 10px; }
-
-  /* ── TANGGAPAN MODAL CONTENT ── */
+  .issue-item { display: flex; align-items: center; gap: 12px; }
+  .issue-rank {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent-bg); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; flex-shrink: 0;
+  }
+  .issue-body { flex: 1; min-width: 0; }
+  .issue-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+  .issue-label span:last-child { color: var(--text-muted); font-weight: 600; }
+  .issue-bar-track { height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+  .issue-bar-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width .8s cubic-bezier(.4,0,.2,1); }
+  .sentiment-tooltip { position: relative; }
+  .sentiment-tooltip .tooltip-content {
+    visibility: hidden; opacity: 0; position: absolute; top: calc(100% + 8px); left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: #1a1714; color: #fff; padding: 7px 11px; border-radius: 8px;
+    font-size: 11px; font-weight: 600; white-space: nowrap; line-height: 1.4;
+    transition: opacity .18s, transform .18s, visibility .18s; z-index: 20; pointer-events: none;
+    box-shadow: var(--shadow-md);
+  }
+  .sentiment-tooltip .tooltip-content::after {
+    content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+    border: 5px solid transparent; border-bottom-color: #1a1714;
+  }
+  .sentiment-tooltip:hover .tooltip-content { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+    /* ── TANGGAPAN MODAL CONTENT ── */
   .tanggapan-aspiration-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 14px; }
   .tanggapan-aspiration-label { font-size: 10.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
   .tanggapan-aspiration-text { font-size: 13.5px; line-height: 1.65; color: var(--text); }
@@ -827,23 +871,30 @@
   </div>
 </section>
 
-<!-- COMING SOON -->
-<section style="background:var(--bg);">
+<!-- ANALISIS AI -->
+<section id="analisis-ai" style="background:var(--surface2);">
   <div class="section-inner">
-    <div class="coming-soon-banner">
-      <div class="cs-noise"></div>
-      <div style="position:relative;">
-        <div class="cs-chip">🔬 Segera Hadir</div>
-        <h2 class="cs-title">Analisis Sentimen<br/><em>Berbasis AI</em></h2>
-        <p class="cs-desc">Kami sedang mengembangkan fitur analisis sentimen otomatis menggunakan kecerdasan buatan untuk memahami emosi dan urgensi di balik setiap aspirasi yang masuk.</p>
-        <div class="cs-features">
-          <div class="cs-feature">😊 Deteksi Sentimen</div>
-          <div class="cs-feature">📈 Tren Topik</div>
-          <div class="cs-feature">🚨 Deteksi Urgensi</div>
-          <div class="cs-feature">🏷️ Auto-Tagging</div>
-          <div class="cs-feature">📊 Word Cloud</div>
-        </div>
+    <div class="section-header">
+      <div class="section-label">🔬 AI Insight</div>
+      <h2 class="section-title">Analisis Sentimen &amp; Tren</h2>
+      <p class="section-sub">Dianalisis otomatis dari seluruh aspirasi yang masuk.</p>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-card-title">Distribusi Sentimen</div>
+        <div class="chart-card-sub">Positif, Netral, Negatif</div>
+        <div class="chart-wrap"><canvas id="chartSentiment"></canvas></div>
       </div>
+      <div class="chart-card">
+        <div class="chart-card-title">🚨 Isu Paling Sering Dilaporkan</div>
+        <div class="chart-card-sub">Diurutkan dari yang paling banyak disebut warga</div>
+        <div id="topIssuesList" style="margin-top:14px;display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-top:20px;">
+      <div class="chart-card-title">Word Cloud</div>
+      <div class="chart-card-sub">Kata paling sering muncul di aspirasi</div>
+      <div id="wordCloudCanvas" style="width:100%;height:200px;"></div>
     </div>
   </div>
 </section>
@@ -933,12 +984,15 @@ async function loadData() {
         progress: f['Progres Aspirasi'] || 'Diterima',
         anon: f['Tipe Identitas Pengirim'] === 'Anonim',
         date: f['Tanggal Pengirim'] || '',
+        sentiment: f['Sentiment'] || null,
+        confidence: f['Confidence'] || null,
         tanggapan: f['Tanggapan'] || ''
       };
     });
     renderHeroPreview();
     renderTimeline();
     initCharts();
+    renderAIInsights();  
   } catch (error) {
     console.error('Error loadData:', error);
     document.getElementById('timeline-list').innerHTML = '<div style="padding:20px;text-align:center;">Gagal memuat aspirasi dari server.</div>';
@@ -953,6 +1007,23 @@ function getFilteredData() {
     if (activeFilters.progress !== 'all' && d.progress !== activeFilters.progress) return false;
     return true;
   }).sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+function sentimentIcon(s) {
+  if (s === 'Positif') return '😊';
+  if (s === 'Netral') return '😐';
+  if (s === 'Negatif') return '😞';
+  return '❓';
+}
+function sentimentClass(s) {
+  if (s === 'Positif') return 'positif';
+  if (s === 'Negatif') return 'negatif';
+  return 'netral';
+}
+function renderSentimentBadge(d) {
+  if (!d.sentiment) return '';
+  const persen = Math.round((d.confidence || 0) * 100);
+  const badgeClass = { Positif: 'badge-green', Netral: 'badge-gray', Negatif: 'badge-red' }[d.sentiment] || 'badge-gray';
+  return `<span class="tl-tag ${badgeClass} sentiment-tooltip">${sentimentIcon(d.sentiment)} ${escapeHtml(d.sentiment)}<span class="tooltip-content">Tingkat keyakinan AI: ${persen}%</span></span>`;
 }
 function progressColor(p) {
   if (p === 'Diterima') return { dot: 'dot-amber', badge: 'badge-blue' };
@@ -1008,7 +1079,7 @@ function renderTimeline() {
   list.innerHTML = toShow.map((d, i) => {
     const pc = progressColor(d.progress);
     const colorIdx = i % avatarColors.length;
-    return `<div class="timeline-item" data-id="${d.id}"><div class="timeline-dot ${pc.dot}"></div><div class="tl-card"><div class="tl-card-header"><div class="tl-meta">${d.anon?`<span style="font-size:20px;">🙈</span>`:`<div style="width:32px;height:32px;border-radius:50%;background:${avatarColors[colorIdx]};color:${avatarTextColors[colorIdx]};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">${getInitials(d.name)}</div>`}<div><div class="tl-name">${escapeHtml(d.anon?'Anonim':d.name)} ${!d.anon&&d.npm?`<span style="font-size:11px;color:var(--text-muted);font-weight:400;">(${escapeHtml(d.npm)})</span>`:''}</div><div style="font-size:11.5px;color:var(--text-muted);">Angkatan ${escapeHtml(String(d.angkatan||''))}</div></div></div><div class="tl-date">${formatDate(d.date)}</div></div><div class="tl-text">${escapeHtml(d.text)}</div><div class="tl-footer"><div class="tl-tags"><span class="tl-tag ${pc.badge}">${escapeHtml(d.progress)}</span><span class="tl-tag ${purposeColor(d.purpose)}">${escapeHtml(d.purpose)}</span><span class="tl-tag ${typeColor(d.type)}">${escapeHtml(d.type)}</span></div><button class="tl-tanggapan-btn" onclick="openTanggapan('${d.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Tanggapan</button></div></div></div>`;
+    return `<div class="timeline-item" data-id="${d.id}"><div class="timeline-dot ${pc.dot}"></div><div class="tl-card"><div class="tl-card-header"><div class="tl-meta">${d.anon?`<span style="font-size:20px;">🙈</span>`:`<div style="width:32px;height:32px;border-radius:50%;background:${avatarColors[colorIdx]};color:${avatarTextColors[colorIdx]};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">${getInitials(d.name)}</div>`}<div><div class="tl-name">${escapeHtml(d.anon?'Anonim':d.name)} ${!d.anon&&d.npm?`<span style="font-size:11px;color:var(--text-muted);font-weight:400;">(${escapeHtml(d.npm)})</span>`:''}</div><div style="font-size:11.5px;color:var(--text-muted);">Angkatan ${escapeHtml(String(d.angkatan||''))}</div></div></div><div class="tl-date">${formatDate(d.date)}</div></div><div class="tl-text">${escapeHtml(d.text)}</div><div class="tl-footer"><div class="tl-tags"><span class="tl-tag ${pc.badge}">${escapeHtml(d.progress)}</span><span class="tl-tag ${purposeColor(d.purpose)}">${escapeHtml(d.purpose)}</span><span class="tl-tag ${typeColor(d.type)}">${escapeHtml(d.type)}</span>${renderSentimentBadge(d)}</div><button class="tl-tanggapan-btn" onclick="openTanggapan('${d.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Tanggapan</button></div></div></div>`;
   }).join('');
   showBtn.style.display = filtered.length > visibleCount ? 'block' : 'none';
 }
@@ -1063,7 +1134,117 @@ function initCharts() {
   if(charts.angkatan) charts.angkatan.destroy();
   charts.angkatan = new Chart(document.getElementById('chartAngkatan'),{type:'bar',data:{labels:Object.keys(angkatanCounts),datasets:[{data:Object.values(angkatanCounts),backgroundColor:'rgba(45,106,79,.85)',borderRadius:6,borderSkipped:false}]},options:{...chartOpts,plugins:{...chartOpts.plugins,legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{family:'Plus Jakarta Sans',size:11}}},y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{family:'Plus Jakarta Sans',size:11},stepSize:1}}}}});
 }
+/* ── AI INSIGHT: SENTIMENT CHART, WORD CLOUD, TOP ISSUES ── */
 
+const STOPWORDS_ID = new Set([
+  'yang','dan','di','ke','dari','untuk','pada','dengan','ini','itu','atau','juga',
+  'ada','tidak','akan','saya','kami','kita','saja','sudah','belum','bisa','harus',
+  'agar','karena','oleh','dalam','adalah','sebagai','dapat','lebih','kurang',
+  'beberapa','kalau','mungkin','banyak','jadi','saat','biar','pas','tolong','mohon',
+  'banget','pak','bu','nya','ya','gitu','kan','deh','sih','aja','udah','dong','yg',
+  'tuh','nih','duh','wae','plis','pliss','kok','loh','lho','apa','apakah','bagi',
+  'para','antara','tentang','sebuah','seperti','masih','hanya','terhadap','oleh'
+]);
+const ISTILAH_PENDEK_PENTING = new Set(['ac', 'wc']);
+
+function hitungFrekuensiKata(teksArray) {
+  const freq = {};
+  teksArray.forEach((teks) => {
+    const bersih = String(teks || '').toLowerCase().replace(/[^a-z\s]/g, ' ');
+    bersih.split(/\s+/).forEach((kata) => {
+      if (!kata) return;
+      if (ISTILAH_PENDEK_PENTING.has(kata)) {
+        freq[kata] = (freq[kata] || 0) + 1;
+      } else if (!STOPWORDS_ID.has(kata) && kata.length > 2) {
+        freq[kata] = (freq[kata] || 0) + 1;
+      }
+    });
+  });
+  return Object.entries(freq).sort((a, b) => b[1] - a[1]);
+}
+
+function renderSentimentChart() {
+  const counts = { Positif: 0, Netral: 0, Negatif: 0 };
+  allData.forEach((d) => { if (d.sentiment && counts[d.sentiment] !== undefined) counts[d.sentiment]++; });
+
+  const canvas = document.getElementById('chartSentiment');
+  if (!canvas) return;
+  if (charts.sentiment) charts.sentiment.destroy();
+
+  charts.sentiment = new Chart(canvas, {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(counts),
+      datasets: [{ data: Object.values(counts), backgroundColor: ['#52b788', '#9ca3af', '#c0392b'], borderWidth: 0, hoverOffset: 4 }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12, font: { family: 'Plus Jakarta Sans', size: 11 } } } },
+    },
+  });
+}
+
+function renderWordCloud(freqList) {
+  const el = document.getElementById('wordCloudCanvas');
+  if (!el || typeof WordCloud === 'undefined') return;
+  el.innerHTML = '';
+
+  const canvas = document.createElement('canvas');
+  canvas.width = el.clientWidth || 500;
+  canvas.height = 200;
+  el.appendChild(canvas);
+
+  const list = freqList.slice(0, 40).map(([kata, jumlah]) => [kata, jumlah * 6]);
+  if (!list.length) { el.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:60px 0;">Belum cukup data.</div>'; return; }
+
+  WordCloud(canvas, {
+    list,
+    gridSize: 8,
+    weightFactor: 3,
+    color: () => ['#2d6a4f', '#52b788', '#e9a23b', '#2563eb', '#7c3aed'][Math.floor(Math.random() * 5)],
+    backgroundColor: 'transparent',
+    fontFamily: 'Lora, serif',
+    fontWeight: '600',
+    rotateRatio: 0.2,
+    wait: 40,
+  });
+}
+
+function renderTopIssues(freqList) {
+  const container = document.getElementById('topIssuesList');
+  if (!container) return;
+
+  const kandidat = freqList.filter(([, jumlah]) => jumlah >= 3).slice(0, 10);
+  if (!kandidat.length) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:20px 0;">Belum cukup data untuk mendeteksi isu berulang.</div>';
+    return;
+  }
+
+  const maxJumlah = kandidat[0][1];
+  container.innerHTML = kandidat.map(([kata, jumlah], i) => {
+    const jumlahAspirasi = allData.filter((d) => (d.text || '').toLowerCase().includes(kata)).length;
+    const persen = Math.round((jumlah / maxJumlah) * 100);
+    return `
+      <div class="issue-item">
+        <div class="issue-rank">${i + 1}</div>
+        <div class="issue-body">
+          <div class="issue-label">
+            <span>${escapeHtml(kata.toUpperCase())}</span>
+            <span>disebut di ${jumlahAspirasi} aspirasi</span>
+          </div>
+          <div class="issue-bar-track"><div class="issue-bar-fill" style="width:${persen}%"></div></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderAIInsights() {
+  const teksArray = allData.map((d) => d.text);
+  const freqList = hitungFrekuensiKata(teksArray);
+  renderSentimentChart();
+  renderWordCloud(freqList);
+  renderTopIssues(freqList);
+}
 /* ══════════════════════════════════════════════
    VALIDATION HELPERS
    ══════════════════════════════════════════════ */
