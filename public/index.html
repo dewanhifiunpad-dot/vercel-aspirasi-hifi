@@ -233,6 +233,55 @@
   }
   .filter-select:hover, .filter-select:focus { border-color: var(--accent-light); color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(82,183,136,.12); }
 
+  /* ── FILTER BAR V2 (pill style) ── */
+  .filterbar-v2 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .filterbar-pills { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .filterbar-pill {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 6px 6px 12px;
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: 13px; font-family: var(--font);
+  }
+  .filterbar-pill .fp-label { color: var(--text-muted); font-weight: 500; }
+  .filterbar-pill .fp-value { color: var(--text); font-weight: 700; }
+  .filterbar-pill .fp-remove {
+    width: 20px; height: 20px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer !important; color: var(--text-muted); transition: background .12s, color .12s; flex-shrink: 0;
+  }
+  .filterbar-pill .fp-remove:hover { background: var(--red-bg); color: var(--red); }
+  .filterbar-add-wrap { position: relative; display: inline-block; }
+  .filterbar-add-btn {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px 6px 12px;
+    border: 1.5px dashed var(--border); border-radius: 8px; background: transparent;
+    font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--text-muted);
+    cursor: pointer !important; transition: all .15s;
+  }
+  .filterbar-add-btn:hover { border-color: var(--accent-light); border-style: solid; color: var(--accent); background: var(--accent-bg); }
+  .filterbar-clear-btn {
+    padding: 6px 14px; border-radius: 8px; border: 1.5px solid var(--border); background: transparent;
+    font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--text-muted);
+    cursor: pointer !important; transition: all .15s;
+  }
+  .filterbar-clear-btn:hover { background: var(--red-bg); border-color: #f5c0bb; color: var(--red); }
+  .filterbar-menu {
+    position: absolute; top: calc(100% + 6px); left: 0; z-index: 60; min-width: 220px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg); padding: 6px; display: none;
+  }
+  .filterbar-menu.open { display: block; }
+  .filterbar-menu-item {
+    padding: 9px 12px; border-radius: 8px; font-size: 13.5px; font-weight: 600; color: var(--text);
+    cursor: pointer !important; transition: background .12s;
+  }
+  .filterbar-menu-item:hover { background: var(--surface2); }
+  .filterbar-menu-item.value-item { font-weight: 500; }
+  .filterbar-menu-back {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 12px; margin-bottom: 4px; font-size: 11.5px; font-weight: 700; letter-spacing: .3px;
+    color: var(--text-muted); cursor: pointer !important; border-bottom: 1px solid var(--border);
+  }
+  .filterbar-menu-back:hover { color: var(--accent); }
+  .filterbar-menu-back svg { flex-shrink: 0; }
+
   /* ── CUSTOM SELECT / PICKER ── */
   .custom-select-wrap { position: relative; }
   .custom-select-wrap .native-select-hidden { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
@@ -710,41 +759,16 @@
       <h2 class="section-title">Semua Aspirasi</h2>
       <p class="section-sub">Terupdate secara real-time setiap ada kiriman baru dari warga HIFI.</p>
     </div>
-    <div class="filter-bars-wrap">
-      <div class="filter-bar">
-        <span class="filter-label">Tujuan:</span>
-        <select class="filter-select" onchange="setFilterSelect('purpose', this.value)">
-          <option value="all">Semua</option>
-          <option value="Dewan">Dewan</option>
-          <option value="HIFI">HIFI</option>
-          <option value="Prodi">Prodi</option>
-          <option value="Fakultas">Fakultas</option>
-          <option value="Departemen">Departemen</option>
-          <option value="Rektorat">Rektorat</option>
-        </select>
+    <div class="filterbar-v2">
+      <div class="filterbar-pills" id="filterbarPills"></div>
+      <div class="filterbar-add-wrap">
+        <button class="filterbar-add-btn" onclick="toggleFilterAddMenu(event)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Filter
+        </button>
+        <div class="filterbar-menu" id="filterbarMenu"></div>
       </div>
-      <div class="filter-bar">
-        <span class="filter-label">Tipe:</span>
-        <select class="filter-select" onchange="setFilterSelect('type', this.value)">
-          <option value="all">Semua</option>
-          <option value="Administrasi">Administrasi</option>
-          <option value="Akademik">Akademik</option>
-          <option value="Beasiswa">Beasiswa</option>
-          <option value="Fasilitas">Fasilitas</option>
-          <option value="Pelayanan">Pelayanan</option>
-        </select>
-      </div>
-      <div class="filter-bar">
-        <span class="filter-label">Progress:</span>
-        <select class="filter-select" onchange="setFilterSelect('progress', this.value)">
-          <option value="all">Semua</option>
-          <option value="Diterima">Diterima</option>
-          <option value="Disampaikan">Disampaikan</option>
-          <option value="Direalisasikan">Direalisasikan</option>
-          <option value="Ditolak">Ditolak</option>
-          <option value="Tidak ada tanggapan">Tidak ada tanggapan</option>
-        </select>
-      </div>
+      <button class="filterbar-clear-btn" id="filterbarClearBtn" style="display:none;" onclick="clearAllFilters()">Clear</button>
     </div>
     <div class="timeline" id="timeline-list">
       <div class="loading-state">
@@ -1127,6 +1151,113 @@ function renderTimeline() {
 }
 function setFilterSelect(key, val) { activeFilters[key] = val; visibleCount = 5; renderTimeline(); }
 function showMore() { visibleCount += 5; renderTimeline(); }
+
+/* ── FILTER BAR V2 (pill style, add-filter menu) ── */
+const FILTER_CATEGORIES = {
+  purpose: { label: 'Tujuan', values: ['Dewan', 'HIFI', 'Prodi', 'Fakultas', 'Departemen', 'Rektorat'] },
+  type: { label: 'Tipe', values: ['Administrasi', 'Akademik', 'Beasiswa', 'Fasilitas', 'Pelayanan'] },
+  progress: { label: 'Progress', values: ['Diterima', 'Disampaikan', 'Direalisasikan', 'Ditolak', 'Tidak ada tanggapan'] },
+};
+let filterMenuStep = 'category';
+let filterMenuActiveCategory = null;
+
+function renderFilterBarV2() {
+  const pillsWrap = document.getElementById('filterbarPills');
+  const clearBtn = document.getElementById('filterbarClearBtn');
+  if (!pillsWrap || !clearBtn) return;
+
+  const activeKeys = Object.keys(activeFilters).filter((k) => activeFilters[k] !== 'all');
+
+  pillsWrap.innerHTML = activeKeys.map((key) => {
+    const cat = FILTER_CATEGORIES[key];
+    return `<div class="filterbar-pill">
+      <span class="fp-label">${cat.label} is</span>
+      <span class="fp-value">${escapeHtml(activeFilters[key])}</span>
+      <span class="fp-remove" onclick="removeFilterPill('${key}')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span>
+    </div>`;
+  }).join('');
+
+  clearBtn.style.display = activeKeys.length ? 'inline-flex' : 'none';
+}
+
+function removeFilterPill(key) {
+  activeFilters[key] = 'all';
+  visibleCount = 5;
+  renderFilterBarV2();
+  renderTimeline();
+}
+
+function clearAllFilters() {
+  activeFilters = { purpose: 'all', type: 'all', progress: 'all' };
+  visibleCount = 5;
+  renderFilterBarV2();
+  renderTimeline();
+}
+
+function toggleFilterAddMenu(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('filterbarMenu');
+  const isOpen = menu.classList.contains('open');
+  closeFilterMenu();
+  if (!isOpen) {
+    filterMenuStep = 'category';
+    filterMenuActiveCategory = null;
+    renderFilterMenu();
+    menu.classList.add('open');
+  }
+}
+
+function closeFilterMenu() {
+  const menu = document.getElementById('filterbarMenu');
+  if (menu) menu.classList.remove('open');
+}
+
+function renderFilterMenu() {
+  const menu = document.getElementById('filterbarMenu');
+  if (!menu) return;
+
+  if (filterMenuStep === 'category') {
+    menu.innerHTML = Object.keys(FILTER_CATEGORIES).map((key) => {
+      const cat = FILTER_CATEGORIES[key];
+      return `<div class="filterbar-menu-item" onclick="selectFilterCategory(event, '${key}')">${cat.label}</div>`;
+    }).join('');
+  } else {
+    const cat = FILTER_CATEGORIES[filterMenuActiveCategory];
+    menu.innerHTML =
+      `<div class="filterbar-menu-back" onclick="backToCategoryList(event)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>${cat.label}</div>` +
+      cat.values.map((v) => `<div class="filterbar-menu-item value-item" onclick="applyFilterValue(event, '${filterMenuActiveCategory}', '${v.replace(/'/g, "\\'")}')">${escapeHtml(v)}</div>`).join('');
+  }
+}
+
+function selectFilterCategory(e, key) {
+  e.stopPropagation();
+  filterMenuStep = 'value';
+  filterMenuActiveCategory = key;
+  renderFilterMenu();
+}
+
+function backToCategoryList(e) {
+  if (e) e.stopPropagation();
+  filterMenuStep = 'category';
+  filterMenuActiveCategory = null;
+  renderFilterMenu();
+}
+
+function applyFilterValue(e, key, value) {
+  e.stopPropagation();
+  activeFilters[key] = value;
+  visibleCount = 5;
+  renderFilterBarV2();
+  renderTimeline();
+  closeFilterMenu();
+}
+
+document.addEventListener('click', (e) => {
+  const wrap = document.querySelector('.filterbar-add-wrap');
+  if (wrap && !wrap.contains(e.target)) closeFilterMenu();
+});
+
+renderFilterBarV2();
 
 /* ── CHARTS ── */
 let charts = {};
@@ -1580,7 +1711,7 @@ function resetForm() {
   clearAllErrors();
   visibleCount = 5;
   activeFilters = { purpose:'all', type:'all', progress:'all' };
-  document.querySelectorAll('.filter-select').forEach(sel => { sel.value = 'all'; sel._refreshCustomSelect && sel._refreshCustomSelect(); });
+  renderFilterBarV2();
 }
 
 /* ── TANGGAPAN MODAL ── */
