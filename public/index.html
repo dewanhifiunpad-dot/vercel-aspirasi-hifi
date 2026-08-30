@@ -233,6 +233,42 @@
   }
   .filter-select:hover, .filter-select:focus { border-color: var(--accent-light); color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(82,183,136,.12); }
 
+  /* ── CUSTOM SELECT / PICKER ── */
+  .custom-select-wrap { position: relative; }
+  .custom-select-wrap .native-select-hidden { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+  .custom-select-trigger {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--bg); color: var(--text); font-family: var(--font); font-size: 14px; font-weight: 500;
+    cursor: pointer !important; transition: all .15s; user-select: none;
+  }
+  .custom-select-trigger.placeholder { color: var(--text-muted); font-weight: 400; }
+  .custom-select-trigger:hover { border-color: var(--accent-light); }
+  .custom-select-wrap.open .custom-select-trigger {
+    border-color: var(--accent-light); background: #fff; box-shadow: 0 0 0 3px rgba(82,183,136,.15);
+  }
+  .custom-select-trigger--filter {
+    padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; min-width: 160px;
+  }
+  .custom-select-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .custom-select-chevron { flex-shrink: 0; color: var(--text-muted); transition: transform .18s; }
+  .custom-select-wrap.open .custom-select-chevron { transform: rotate(180deg); color: var(--accent); }
+  .custom-select-options {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 50;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg); max-height: 260px; overflow-y: auto; padding: 6px;
+    opacity: 0; pointer-events: none; transform: translateY(-6px);
+    transition: opacity .15s, transform .15s;
+  }
+  .custom-select-wrap.open .custom-select-options { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .custom-select-option {
+    padding: 9px 12px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: var(--text);
+    cursor: pointer !important; transition: background .12s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .custom-select-option:hover { background: var(--surface2); }
+  .custom-select-option.selected { background: var(--accent-bg); color: var(--accent); font-weight: 700; }
+  .custom-select-option.placeholder-option { color: var(--text-muted); font-weight: 400; }
+
   /* ── TIMELINE ── */
   .timeline { position: relative; padding-left: 32px; }
   .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: var(--border); border-radius: 2px; }
@@ -327,6 +363,7 @@
 
   /* ── CHARTS ── */
   .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  #analisis-ai .charts-grid { align-items: start; }
   .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow-sm); }
   .chart-card-title { font-size: 13.5px; font-weight: 700; margin-bottom: 4px; }
   .chart-card-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
@@ -356,6 +393,11 @@
   }
   input:focus, select:focus, textarea:focus { border-color: var(--accent-light); background: #fff; box-shadow: 0 0 0 3px rgba(82,183,136,.15); }
   input.field-error, select.field-error, textarea.field-error {
+    border-color: var(--red) !important;
+    box-shadow: 0 0 0 3px rgba(192,57,43,.12) !important;
+    background: #fff9f9;
+  }
+  .custom-select-trigger.field-error {
     border-color: var(--red) !important;
     box-shadow: 0 0 0 3px rgba(192,57,43,.12) !important;
     background: #fff9f9;
@@ -1250,11 +1292,17 @@ function renderAIInsights() {
    ══════════════════════════════════════════════ */
 function setError(id) {
   const el = document.getElementById(id);
-  if (el) el.classList.add('field-error');
+  if (!el) return;
+  el.classList.add('field-error');
+  const wrap = el.closest('.custom-select-wrap');
+  if (wrap) { const trig = wrap.querySelector('.custom-select-trigger'); if (trig) trig.classList.add('field-error'); }
 }
 function clearError(id) {
   const el = document.getElementById(id);
-  if (el) el.classList.remove('field-error');
+  if (!el) return;
+  el.classList.remove('field-error');
+  const wrap = el.closest('.custom-select-wrap');
+  if (wrap) { const trig = wrap.querySelector('.custom-select-trigger'); if (trig) trig.classList.remove('field-error'); }
 }
 function clearAllErrors() {
   ['f-name','f-npm','f-contact','f-angkatan','f-angkatan-custom',
@@ -1437,14 +1485,102 @@ setupOther('f-purpose', 'purpose-other-wrap');
 setupOther('f-type', 'type-other-wrap');
 setupOther('f-angkatan', 'angkatan-other-wrap');
 
+/* ── CUSTOM SELECT / PICKER ── */
+function initCustomSelects() {
+  const selects = document.querySelectorAll('#f-angkatan, #f-purpose, #f-type, select.filter-select');
+
+  selects.forEach((select) => {
+    if (select.dataset.customInit) return;
+    select.dataset.customInit = '1';
+
+    const isFilter = select.classList.contains('filter-select');
+
+    const wrap = document.createElement('div');
+    wrap.className = 'custom-select-wrap';
+
+    select.parentNode.insertBefore(wrap, select);
+    wrap.appendChild(select);
+    select.classList.add('native-select-hidden');
+
+    const trigger = document.createElement('div');
+    trigger.className = 'custom-select-trigger' + (isFilter ? ' custom-select-trigger--filter' : '');
+    trigger.tabIndex = 0;
+    trigger.setAttribute('role', 'button');
+
+    const label = document.createElement('span');
+    label.className = 'custom-select-label';
+    trigger.appendChild(label);
+
+    const chevron = document.createElement('span');
+    chevron.className = 'custom-select-chevron';
+    chevron.innerHTML = '<svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>';
+    trigger.appendChild(chevron);
+
+    const optionsBox = document.createElement('div');
+    optionsBox.className = 'custom-select-options';
+
+    function buildOptions() {
+      optionsBox.innerHTML = '';
+      Array.from(select.options).forEach((opt) => {
+        const item = document.createElement('div');
+        item.className = 'custom-select-option';
+        if (opt.value === '' && !isFilter) item.classList.add('placeholder-option');
+        if (opt.value === select.value) item.classList.add('selected');
+        item.textContent = opt.textContent;
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          select.value = opt.value;
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+          refresh();
+          closeDropdown();
+        });
+        optionsBox.appendChild(item);
+      });
+    }
+
+    function refresh() {
+      const selectedOption = select.options[select.selectedIndex];
+      label.textContent = selectedOption ? selectedOption.textContent : '';
+      trigger.classList.toggle('placeholder', !isFilter && (!selectedOption || selectedOption.value === ''));
+      buildOptions();
+    }
+
+    function openDropdown() {
+      document.querySelectorAll('.custom-select-wrap.open').forEach((w) => { if (w !== wrap) w.classList.remove('open'); });
+      wrap.classList.add('open');
+    }
+    function closeDropdown() { wrap.classList.remove('open'); }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      wrap.classList.contains('open') ? closeDropdown() : openDropdown();
+    });
+    trigger.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); trigger.click(); }
+      if (e.key === 'Escape') closeDropdown();
+    });
+
+    wrap.appendChild(trigger);
+    wrap.appendChild(optionsBox);
+
+    select._refreshCustomSelect = refresh;
+    refresh();
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.custom-select-wrap.open').forEach((w) => w.classList.remove('open'));
+  });
+}
+initCustomSelects();
+
 function resetForm() {
   ['f-name','f-npm','f-contact','f-text','f-purpose-custom','f-drive','f-type-custom','f-angkatan-custom'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-  ['f-angkatan','f-purpose','f-type'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['f-angkatan','f-purpose','f-type'].forEach(id => { const el=document.getElementById(id); if(el) { el.value=''; el._refreshCustomSelect && el._refreshCustomSelect(); } });
   document.querySelectorAll('.custom-other').forEach(el => el.classList.remove('visible'));
   clearAllErrors();
   visibleCount = 5;
   activeFilters = { purpose:'all', type:'all', progress:'all' };
-  document.querySelectorAll('.filter-select').forEach(sel => sel.value = 'all');
+  document.querySelectorAll('.filter-select').forEach(sel => { sel.value = 'all'; sel._refreshCustomSelect && sel._refreshCustomSelect(); });
 }
 
 /* ── TANGGAPAN MODAL ── */
@@ -1455,7 +1591,7 @@ function openTanggapan(id) {
   const hasTanggapan = d.tanggapan && d.tanggapan.trim() !== '';
   document.getElementById('tanggapanContent').innerHTML = `
     <div class="tanggapan-aspiration-box"><div class="tanggapan-aspiration-label">Aspirasi</div><div class="tanggapan-aspiration-text">${escapeHtml(d.text)}</div></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;"><span class="tl-tag ${pc.badge}">${escapeHtml(d.progress)}</span><span class="tl-tag ${purposeColor(d.purpose)}">${escapeHtml(d.purpose)}</span><span class="tl-tag ${typeColor(d.type)}">${escapeHtml(d.type)}</span></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;"><span class="tl-tag ${pc.badge}">${escapeHtml(d.progress)}</span><span class="tl-tag ${purposeColor(d.purpose)}">${escapeHtml(d.purpose)}</span><span class="tl-tag ${typeColor(d.type)}">${escapeHtml(d.type)}</span>${renderSentimentBadge(d)}</div>
     <div class="tanggapan-divider"></div>
     <div class="tanggapan-response-label"><span class="tanggapan-response-dot"></span>Tanggapan Resmi</div>
     ${hasTanggapan
