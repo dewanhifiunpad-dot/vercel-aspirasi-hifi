@@ -953,7 +953,7 @@
       </div>
       <div class="chart-card">
         <div class="chart-card-title">🚨 Isu Paling Sering Dilaporkan</div>
-        <div class="chart-card-sub">Diurutkan dari yang paling banyak disebut warga</div>
+        <div class="chart-card-sub">Diurutkan dari yang paling banyak disebut warga himpunan</div>
         <div id="topIssuesList" style="margin-top:14px;display:flex;flex-direction:column;gap:8px;"></div>
       </div>
     </div>
@@ -967,7 +967,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <strong>HIFI Aspirasi</strong> — Platform Aspirasi Himpunan Mahasiswa Fisika FMIPA Unpad &nbsp;·&nbsp; Dibuat dengan ❤️ untuk warga HIFI
+  <strong>Kawal HIFI</strong> — Platform Aspirasi Himpunan Mahasiswa Fisika FMIPA Unpad &nbsp;·&nbsp; Dibuat dengan ❤️ untuk warga HIFI
 </footer>
 
 <!-- TANGGAPAN MODAL -->
@@ -1171,7 +1171,7 @@ function renderFilterBarV2() {
   pillsWrap.innerHTML = activeKeys.map((key) => {
     const cat = FILTER_CATEGORIES[key];
     return `<div class="filterbar-pill">
-      <span class="fp-label">${cat.label} is</span>
+      <span class="fp-label">${cat.label}:</span>
       <span class="fp-value">${escapeHtml(activeFilters[key])}</span>
       <span class="fp-remove" onclick="removeFilterPill('${key}')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span>
     </div>`;
